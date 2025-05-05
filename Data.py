@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.patches import Wedge, Circle
+import copy
 
 
 class Data:
@@ -374,8 +375,8 @@ class Data:
 class class_data:
     student_data={}
     @staticmethod
-    def class_data():
-        class_data.student_data=Data.students.copy()
+    def clone_data():
+        class_data.student_data=copy.deepcopy(Data.students)
         return class_data.student_data
 
 
@@ -384,7 +385,7 @@ class class_data:
 if __name__ == "__main__":
     filepath = "FA23-BCS-3.xlsx" 
     Data.read_data(filepath)  
-    # Data.search_student("FA23-BCS-048")  
+    # Data.search_student("FA23-BCS-273")  
     # Data.subject_stats("CSC241")
     # Data.student_status()
     # print(Data.failed_students("CSC241"))
@@ -397,6 +398,18 @@ if __name__ == "__main__":
     # print(Data.student_status())
     # Data.gpa_analysis()
     # Data.batch_analysis()
-    print(class_data.student_data)
+    class_data.clone_data()
+    for student in class_data.student_data.items():
+        print(student)
+
+    # for roll_no, data in class_data.student_data.items():
+    #     print("Roll No:", roll_no)
+    #     print("Name:", data['name'])
+    #     print("GPA:", data['GPA'])
+    #     print("Courses:")
+    #     for course, marks in data['courses'].items():
+    #         print(f"  {course}: {marks}")
+    #     print("-" * 30)
+
 
 
