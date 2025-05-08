@@ -378,7 +378,30 @@ class class_data:
     def clone_data():
         class_data.student_data=copy.deepcopy(Data.students)
         return class_data.student_data
+    
+    @staticmethod
+    def create_class(name, start, end):
+        class_student = {}
+        startnum = int(start[-3:])
+        endnum = int(end[-3:])
 
+        for roll in class_data.student_data:
+            rollNo = int(roll[-3:])
+            if startnum <= rollNo <= endnum:
+                class_student[roll] = class_data.student_data[roll] 
+
+        return class_student
+
+
+
+# class Class:
+#     name=str
+#     class_students={}
+
+#     def __init__(self,name,start,end,students):
+#         self.name=name
+#         for roll in range(start,end+1):
+#             Class.class_students.
 
 
 
@@ -399,8 +422,12 @@ if __name__ == "__main__":
     # Data.gpa_analysis()
     # Data.batch_analysis()
     class_data.clone_data()
-    for student in class_data.student_data.items():
-        print(student)
+    # for student in class_data.student_data.items():
+    #     print(student)
+
+    selected_students = class_data.create_class('E', 'FA23-BCS-242', 'FA23-BCS-300')
+    for roll, data in selected_students.items():
+        print(roll, data)
 
     # for roll_no, data in class_data.student_data.items():
     #     print("Roll No:", roll_no)
