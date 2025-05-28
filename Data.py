@@ -372,34 +372,14 @@ class Data:
         print('under process')
     
 
-# class class_data:
-#     student_data={}
-#     @staticmethod
-#     def clone_data():
-#         class_data.student_data=copy.deepcopy(Data.students)
-#         return class_data.student_data
-    
-#     @staticmethod
-#     def create_class(name, start, end):
-#         class_student = {}
-#         startnum = int(start[-3:])
-#         endnum = int(end[-3:])
-
-#         for roll in class_data.student_data:
-#             rollNo = int(roll[-3:])
-#             if startnum <= rollNo <= endnum:
-#                 class_student[roll] = class_data.student_data[roll] 
-
-#         return class_student
-
-
-
 class ClassData:
     student_data = {}
+    courses=()
 
     @staticmethod
     def clone_data():
         ClassData.student_data = copy.deepcopy(Data.students)
+        ClassData.courses = copy.deepcopy(Data.all_courses)
 
     def __init__(self, class_name):
         self.class_name = class_name
@@ -413,11 +393,146 @@ class ClassData:
             roll_num = int(roll[-3:])
             if start_num <= roll_num <= end_num:
                 self.students[roll] = ClassData.student_data[roll]
+        return self.students
 
     def add_student(self, roll_no):
         """Add a single student by roll number """
         if roll_no in ClassData.student_data:
             self.students[roll_no] = ClassData.student_data[roll_no]
+
+    def gpa_analysis(self):
+        highest_gpa = 0.0
+        highest_cgpa = 0.0
+        gpa_sum = 0
+        cgpa_sum = 0
+        count = 0
+
+        above_3_5 = 0
+        above_3_0 = 0
+        above_2_5 = 0
+        above_2_0 = 0
+        below_2_0 = 0
+
+        for student_id, data in self.students.items():
+            gpa = float(data['GPA'])
+            cgpa = float(data['CGPA'])
+
+            if gpa >= 3.5:
+                above_3_5 += 1
+            elif gpa >= 3.0:
+                above_3_0 += 1
+            elif gpa >= 2.5:
+                above_2_5 += 1
+            elif gpa >= 2.0:
+                above_2_0 += 1
+            else:
+                below_2_0 += 1
+
+            if gpa > highest_gpa:
+                highest_gpa = gpa
+            if cgpa > highest_cgpa:
+                highest_cgpa = cgpa
+
+            gpa_sum += gpa
+            cgpa_sum += cgpa
+            count += 1
+
+        average_gpa = (gpa_sum / count) if count > 0 else 0.0
+        average_cgpa = (cgpa_sum / count) if count > 0 else 0.0
+
+        result = {
+            'above_3.5': above_3_5,
+            'above_3.0': above_3_0,
+            'above_2.5': above_2_5,
+            'above_2.0': above_2_0,
+            'below_2.0': below_2_0,
+            'highest_gpa': highest_gpa,
+            'highest_cgpa': highest_cgpa,
+            'average_gpa': round(average_gpa, 2),
+            'average_cgpa': round(average_cgpa, 2)
+        }
+
+        return result
+
+    def student_status (self):
+        good_students=0
+        probation_students=0
+        dismissed_students=0
+        enrolled_students=0
+        for student_id,data in self.students.items():
+            if data['Status'] == "GAS":
+                good_students+=1
+            elif data['Status'] == "PRB":
+                # print(student_id,data,"\n")
+                probation_students+=1
+            elif data['Status'] == "DI" or data['Status'] == "DIS" :
+                dismissed_students+=1
+            enrolled_students+=1
+
+        result = {"Enrolled students":enrolled_students,"Good students":good_students,"Probation students":probation_students,
+                "Dismissed students":dismissed_students}
+        return result
+    
+    def grade_distribution(self,coursename):
+
+        A_grade = A_neg_grade = B_plus_grade = B_neg_grade = 0
+        C_plus_grade = C_neg_grade = D_grade = F_grade = 0
+        total_student = passed = 0
+        marks_std = []  
+
+        for student_id, data in self.students.items():
+            if coursename in data['courses']:
+                try:
+                    marks = int(data['courses'][coursename])  # Convert marks safely
+                    marks_std.append(marks)  
+
+                    if marks >= 85:
+                        A_grade += 1
+                        passed += 1
+                    elif marks >= 80:
+                        A_neg_grade += 1
+                        passed += 1
+                    elif marks >= 75:
+                        B_plus_grade += 1
+                        passed += 1
+                    elif marks >= 68:
+                        B_neg_grade += 1
+                        passed += 1
+                    elif marks >= 64:
+                        C_plus_grade += 1
+                        passed += 1
+                    elif marks >= 58:
+                        C_neg_grade += 1
+                        passed += 1
+                    elif marks >= 50:
+                        D_grade += 1
+                        passed += 1
+                    else:
+                        F_grade += 1
+
+                    total_student += 1  
+
+                except ValueError:
+                    print(f"Warning: Invalid marks for {student_id} in {coursename}, skipping.")
+
+        print(f"========================== {coursename} =============================")
+        print(f"A Grade: {A_grade}\nA- Grade: {A_neg_grade}\nB+ Grade: {B_plus_grade}\nB- Grade: {B_neg_grade}")
+        print(f"C+ Grade: {C_plus_grade}\nC- Grade: {C_neg_grade}\nD Grade: {D_grade}\nF Grade: {F_grade}")
+        print(f"Total students: {total_student}")
+        print(f"Total Passed students: {passed}")
+        print(f"Total Failed students: {F_grade}")
+
+        if total_student > 0 and len(marks_std) > 1:  
+            print(f'Passed percentage: {passed / total_student * 100:.2f} %')
+            standard_deviation = np.std(marks_std, ddof=1)  # Use ddof=1 for sample data
+            print(f"Standard deviation of course: {standard_deviation:.2f}")
+        elif len(marks_std) == 1:
+            print("Standard deviation is 0 as there's only one student.")
+        else:
+            print("No valid student marks found for this course.")
+        Data.standard_deviation_plot(marks_std,"E")
+
+
 
 
 
@@ -438,18 +553,34 @@ if __name__ == "__main__":
     # Data.gpa_analysis()
     # Data.batch_analysis()
     ClassData.clone_data()
-    # for student in class_data.student_data.items():
+    # for student in ClassData.student_data.items():
     #     print(student)
-    # E=ClassData("E")
-    # selected_students = E.add_by_range('FA23-BCS-242', 'FA23-BCS-300')
-    # for roll, data in selected_students.items():
+    E = ClassData("E")
+    E.add_by_range('FA23-BCS-242', 'FA23-BCS-300')
+    E.add_by_range('FA23-BCS-403', 'FA23-BCS-407')
+    E.add_by_range('FA23-BCS-453', 'FA23-BCS-463')
+    E.add_student('FA23-BCS-409')
+    E.add_student('FA23-BCS-412')
+    print(E.gpa_analysis())
+    print(E.student_status())
+    print(E.grade_distribution('CSC241'))
+    status=E.student_status()
+    chart=Data.student_status_barchart(status['Enrolled students'],status['Dismissed students'],status['Probation students'],status['Good students'])
+
+    # for roll_no, data in E.students.items():
+    #     print("Roll No:", roll_no)
+    #     print("Name:", data.get('name', 'N/A'))
+    #     print("GPA:", data.get('GPA', 'N/A'))
+
+    # for roll, data in selected_students:
     #     print(roll, data)
 
-    # for roll_no, data in class_data.student_data.items():
-    #     print("Roll No:", roll_no)
-    #     print("Name:", data['name'])
-    #     print("GPA:", data['GPA'])
-    #     print("Courses:")
+    # for roll_no, data in ClassData.student_data.items():
+    # for roll_no, data in selected_students.items:
+        # print("Roll No:", roll_no)
+        # print("Name:", data['name'])
+        # print("GPA:", data['GPA'])
+        # print("Courses:")
     #     for course, marks in data['courses'].items():
     #         print(f"  {course}: {marks}")
     #     print("-" * 30)
