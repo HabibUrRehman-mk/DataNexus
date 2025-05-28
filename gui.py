@@ -133,7 +133,7 @@ class StudentTable(QMainWindow):
         
 
 if __name__ == "__main__":
-    filepath = "FA20-BEE.xlsx"
+    filepath = "FA23-BCS-3.xlsx"
     Data.read_data(filepath)
 
     app = QApplication(sys.argv)

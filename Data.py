@@ -372,36 +372,52 @@ class Data:
         print('under process')
     
 
-class class_data:
-    student_data={}
+# class class_data:
+#     student_data={}
+#     @staticmethod
+#     def clone_data():
+#         class_data.student_data=copy.deepcopy(Data.students)
+#         return class_data.student_data
+    
+#     @staticmethod
+#     def create_class(name, start, end):
+#         class_student = {}
+#         startnum = int(start[-3:])
+#         endnum = int(end[-3:])
+
+#         for roll in class_data.student_data:
+#             rollNo = int(roll[-3:])
+#             if startnum <= rollNo <= endnum:
+#                 class_student[roll] = class_data.student_data[roll] 
+
+#         return class_student
+
+
+
+class ClassData:
+    student_data = {}
+
     @staticmethod
     def clone_data():
-        class_data.student_data=copy.deepcopy(Data.students)
-        return class_data.student_data
-    
-    @staticmethod
-    def create_class(name, start, end):
-        class_student = {}
-        startnum = int(start[-3:])
-        endnum = int(end[-3:])
+        ClassData.student_data = copy.deepcopy(Data.students)
 
-        for roll in class_data.student_data:
-            rollNo = int(roll[-3:])
-            if startnum <= rollNo <= endnum:
-                class_student[roll] = class_data.student_data[roll] 
+    def __init__(self, class_name):
+        self.class_name = class_name
+        self.students = {}
 
-        return class_student
+    def add_by_range(self, start, end):
+        """Add students based on roll number range """
+        start_num = int(start[-3:])
+        end_num = int(end[-3:])
+        for roll in ClassData.student_data:
+            roll_num = int(roll[-3:])
+            if start_num <= roll_num <= end_num:
+                self.students[roll] = ClassData.student_data[roll]
 
-
-
-# class Class:
-#     name=str
-#     class_students={}
-
-#     def __init__(self,name,start,end,students):
-#         self.name=name
-#         for roll in range(start,end+1):
-#             Class.class_students.
+    def add_student(self, roll_no):
+        """Add a single student by roll number """
+        if roll_no in ClassData.student_data:
+            self.students[roll_no] = ClassData.student_data[roll_no]
 
 
 
@@ -421,13 +437,13 @@ if __name__ == "__main__":
     # print(Data.student_status())
     # Data.gpa_analysis()
     # Data.batch_analysis()
-    class_data.clone_data()
+    ClassData.clone_data()
     # for student in class_data.student_data.items():
     #     print(student)
-
-    selected_students = class_data.create_class('E', 'FA23-BCS-242', 'FA23-BCS-300')
-    for roll, data in selected_students.items():
-        print(roll, data)
+    # E=ClassData("E")
+    # selected_students = E.add_by_range('FA23-BCS-242', 'FA23-BCS-300')
+    # for roll, data in selected_students.items():
+    #     print(roll, data)
 
     # for roll_no, data in class_data.student_data.items():
     #     print("Roll No:", roll_no)
