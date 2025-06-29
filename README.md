@@ -26,13 +26,8 @@ To get started, you need to install the required Python libraries.
 
 Once the libraries are installed, you can run the analysis tool.
 
-1.  **Execute the Python script for the analysis tool.** (Assuming your script is named `analysis_tool.py` or similar. Please replace with the actual filename if different.)
+1.  **Execute the Python script ( main.py ) for the analysis tool.**
 
-    ```bash
-    python your_analysis_script_name.py
-    ```
-
-    This will launch the graphical user interface (GUI) of the analysis tool.
 
 2.  **Select Your Data File:**
     * In the GUI, click the **"Select File"** button, which is located in the **right top corner**.
